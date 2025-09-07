@@ -8,8 +8,6 @@ const form = document.querySelector('.feedback-form');
 
 form.addEventListener('input', handlerInput);
 
-populateFields();
-
 function handlerInput(event){
     const { name, value } = event.target;
     formData[name] = value.trim();
@@ -17,13 +15,14 @@ function handlerInput(event){
 };
 
 function populateFields() {
-    const fields = localStorage.getItem(localStorageKey);
-    if(fields) {
-       const parsedFields = JSON.parse(fields);
-       form.elements.email.value = parsedFields.email;
-       form.elements.message.value = parsedFields.message;
+    const fields = JSON.parse(localStorage.getItem(localStorageKey));
+    if (!fields) return;
+    for (const key in fields) {
+        formData[key] = fields[key];
+        form.elements[key].value = fields[key];
     }
 };
+populateFields();
 
 form.addEventListener('submit', handlerSubmit);
 
@@ -34,6 +33,9 @@ function handlerSubmit (event) {
         alert('Fill please all fields');
         return;
     }
-  event.target.reset();
+  console.log(formData);
   localStorage.removeItem(localStorageKey);
+  event.target.reset();
+  formData.email = "";
+  formData.message = "";
 };
